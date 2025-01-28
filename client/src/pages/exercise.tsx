@@ -1,9 +1,17 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import VideoPlayer from "@/components/video-player";
+import FeedbackForm from "@/components/feedback-form";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Upload, Check } from "lucide-react";
+import { ArrowLeft, Upload, Check, MessageCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Exercise {
   id: number;
@@ -13,8 +21,17 @@ interface Exercise {
 }
 
 interface Progress {
+  id: number;
   videoUrl: string | null;
   completed: boolean;
+  feedback: Feedback[];
+}
+
+interface Feedback {
+  id: number;
+  content: string;
+  rating: number;
+  createdAt: string;
 }
 
 export default function Exercise() {
@@ -105,9 +122,49 @@ export default function Exercise() {
         </div>
 
         {progress?.completed && (
-          <div className="mt-8 flex items-center text-green-600">
-            <Check className="mr-2 h-5 w-5" />
-            Exercise completed
+          <div className="mt-8">
+            <div className="flex items-center text-green-600 mb-4">
+              <Check className="mr-2 h-5 w-5" />
+              Exercise completed
+            </div>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  {progress.feedback?.length
+                    ? "View & Add Feedback"
+                    : "Add Feedback"}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Exercise Feedback</DialogTitle>
+                </DialogHeader>
+                {progress.feedback?.length > 0 && (
+                  <div className="mb-6 space-y-4">
+                    <h3 className="font-semibold">Previous Feedback</h3>
+                    {progress.feedback.map((feedback) => (
+                      <div
+                        key={feedback.id}
+                        className="bg-gray-50 p-4 rounded-lg"
+                      >
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="font-medium">
+                            Rating: {feedback.rating}/5
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(feedback.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <p className="text-gray-700">{feedback.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <FeedbackForm progressId={progress.id} />
+              </DialogContent>
+            </Dialog>
           </div>
         )}
       </div>

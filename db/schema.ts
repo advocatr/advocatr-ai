@@ -27,6 +27,14 @@ export const userProgress = pgTable("user_progress", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const feedback = pgTable("feedback", {
+  id: serial("id").primaryKey(),
+  progressId: integer("progress_id").references(() => userProgress.id).notNull(),
+  content: text("content").notNull(),
+  rating: integer("rating").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const exerciseRelations = relations(exercises, ({ many }) => ({
   progress: many(userProgress),
 }));
@@ -35,7 +43,21 @@ export const userRelations = relations(users, ({ many }) => ({
   progress: many(userProgress),
 }));
 
+export const userProgressRelations = relations(userProgress, ({ one, many }) => ({
+  user: one(users, { fields: [userProgress.userId], references: [users.id] }),
+  exercise: one(exercises, { fields: [userProgress.exerciseId], references: [exercises.id] }),
+  feedback: many(feedback),
+}));
+
+export const feedbackRelations = relations(feedback, ({ one }) => ({
+  progress: one(userProgress, { fields: [feedback.progressId], references: [userProgress.id] }),
+}));
+
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
+export const insertFeedbackSchema = createInsertSchema(feedback);
+export const selectFeedbackSchema = createSelectSchema(feedback);
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Feedback = typeof feedback.$inferSelect;
+export type NewFeedback = typeof feedback.$inferInsert;
