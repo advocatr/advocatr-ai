@@ -18,6 +18,9 @@ const crypto = {
   },
   compare: async (suppliedPassword: string, storedPassword: string) => {
     const [hashedPassword, salt] = storedPassword.split(".");
+    if (!salt) {
+      throw new Error("Invalid password format");
+    }
     const hashedPasswordBuf = Buffer.from(hashedPassword, "hex");
     const suppliedPasswordBuf = (await scryptAsync(
       suppliedPassword,
