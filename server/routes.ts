@@ -19,6 +19,25 @@ export function registerRoutes(app: Express): Server {
     res.json(allExercises);
   });
 
+  // Get single exercise
+  app.get("/api/exercises/:id", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).send("Not authenticated");
+    }
+    const exerciseId = parseInt(req.params.id);
+    const [exercise] = await db
+      .select()
+      .from(exercises)
+      .where(eq(exercises.id, exerciseId))
+      .limit(1);
+
+    if (!exercise) {
+      return res.status(404).send("Exercise not found");
+    }
+
+    res.json(exercise);
+  });
+
   // Get user progress
   app.get("/api/progress", async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -31,6 +50,25 @@ export function registerRoutes(app: Express): Server {
       }
     });
     res.json(progress);
+  });
+
+  // Get progress for specific exercise
+  app.get("/api/progress/:exerciseId", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).send("Not authenticated");
+    }
+    const exerciseId = parseInt(req.params.exerciseId);
+    const [progress] = await db
+      .select()
+      .from(userProgress)
+      .where(
+        and(
+          eq(userProgress.userId, req.user.id),
+          eq(userProgress.exerciseId, exerciseId)
+        )
+      );
+
+    res.json(progress || null);
   });
 
   // Update exercise progress
@@ -108,22 +146,6 @@ export function registerRoutes(app: Express): Server {
       .returning();
 
     res.json(newFeedback);
-  });
-
-  // Get feedback for a specific exercise progress
-  app.get("/api/feedback/:progressId", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).send("Not authenticated");
-    }
-
-    const progressId = parseInt(req.params.progressId);
-
-    const feedbackList = await db.query.feedback.findMany({
-      where: eq(feedback.progressId, progressId),
-      orderBy: feedback.createdAt,
-    });
-
-    res.json(feedbackList);
   });
 
   const httpServer = createServer(app);
