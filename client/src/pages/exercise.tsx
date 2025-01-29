@@ -126,7 +126,12 @@ export default function Exercise() {
         <h1 className="text-3xl font-bold mb-6">{exercise.title}</h1>
         <p className="text-gray-600 mb-8">{exercise.description}</p>
 
-        <div className="space-y-8">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Exercise Demo</h2>
+            <VideoPlayer url={exercise.demoVideoUrl} />
+          </div>
+
           <div>
             <h2 className="text-xl font-semibold mb-4">Your Submission</h2>
             {progress?.videoUrl ? (
@@ -162,78 +167,66 @@ export default function Exercise() {
               </div>
             )}
           </div>
-
-          {progress?.videoUrl && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Exercise Demo</h2>
-              <div className="bg-white p-6 rounded-lg border">
-                <p className="text-gray-600 mb-4">
-                  Now that you've submitted your attempt, watch this demo to see the exercise performed:
-                </p>
-                <VideoPlayer url={exercise.demoVideoUrl} />
-              </div>
-            </div>
-          )}
-
-          {progress?.completed && showProfessionalAnswer && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Professional Answer</h2>
-              <div className="bg-white p-6 rounded-lg border">
-                <p className="text-gray-600 mb-4">
-                  Watch this professional answer to compare and learn from their approach:
-                </p>
-                <VideoPlayer url={exercise.professionalAnswerUrl} />
-              </div>
-            </div>
-          )}
-
-          {progress?.completed && (
-            <div>
-              <div className="flex items-center text-green-600 mb-4">
-                <Check className="mr-2 h-5 w-5" />
-                Exercise completed
-              </div>
-
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    {progress.feedback?.length
-                      ? "View & Add Feedback"
-                      : "Add Feedback"}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Exercise Feedback</DialogTitle>
-                  </DialogHeader>
-                  {progress.feedback?.length > 0 && (
-                    <div className="mb-6 space-y-4">
-                      <h3 className="font-semibold">Previous Feedback</h3>
-                      {progress.feedback.map((feedback) => (
-                        <div
-                          key={feedback.id}
-                          className="bg-gray-50 p-4 rounded-lg"
-                        >
-                          <div className="flex justify-between items-center mb-2">
-                            <div className="font-medium">
-                              Rating: {feedback.rating}/5
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {new Date(feedback.createdAt).toLocaleDateString()}
-                            </div>
-                          </div>
-                          <p className="text-gray-700">{feedback.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <FeedbackForm progressId={progress.id} />
-                </DialogContent>
-              </Dialog>
-            </div>
-          )}
         </div>
+
+        {progress?.completed && showProfessionalAnswer && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Professional Answer</h2>
+            <div className="bg-white p-6 rounded-lg border">
+              <p className="text-gray-600 mb-4">
+                Watch this professional answer to compare and learn from their approach:
+              </p>
+              <VideoPlayer url={exercise.professionalAnswerUrl} />
+            </div>
+          </div>
+        )}
+
+        {progress?.completed && (
+          <div className="mt-8">
+            <div className="flex items-center text-green-600 mb-4">
+              <Check className="mr-2 h-5 w-5" />
+              Exercise completed
+            </div>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  {progress.feedback?.length
+                    ? "View & Add Feedback"
+                    : "Add Feedback"}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Exercise Feedback</DialogTitle>
+                </DialogHeader>
+                {progress.feedback?.length > 0 && (
+                  <div className="mb-6 space-y-4">
+                    <h3 className="font-semibold">Previous Feedback</h3>
+                    {progress.feedback.map((feedback) => (
+                      <div
+                        key={feedback.id}
+                        className="bg-gray-50 p-4 rounded-lg"
+                      >
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="font-medium">
+                            Rating: {feedback.rating}/5
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(feedback.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <p className="text-gray-700">{feedback.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <FeedbackForm progressId={progress.id} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </div>
     </div>
   );
