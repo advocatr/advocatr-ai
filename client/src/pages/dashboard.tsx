@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import ExerciseCard from "@/components/exercise-card";
-import { LogOut, Loader2, User } from "lucide-react";
+import { LogOut, Loader2, User, Settings } from "lucide-react";
 import { useLocation } from "wouter";
 
 interface Exercise {
@@ -61,27 +61,38 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Welcome, {user?.username}
-            </h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Track your progress through the advocacy exercises
-            </p>
-          </div>
-          <div className="flex gap-4">
-            <Button
-              variant="outline"
-              onClick={() => setLocation("/profile")}
-            >
-              <User className="mr-2 h-4 w-4" />
-              Profile
-            </Button>
-            <Button variant="outline" onClick={() => logout()}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                <span style={{ color: "#360089" }}>⚖</span> Advocatr
+              </h1>
+              <p className="mt-1 text-sm text-gray-600">
+                Track your progress through the advocacy exercises
+              </p>
+            </div>
+            <div className="flex gap-4">
+              {user?.isAdmin && (
+                <Button
+                  variant="outline"
+                  onClick={() => setLocation("/admin/exercises")}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Admin Dashboard
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/profile")}
+              >
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </Button>
+              <Button variant="outline" onClick={() => logout()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </header>

@@ -6,6 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/hooks/use-user";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import ResetPasswordForm from "@/components/reset-password-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function AuthPage() {
   const { login, register } = useUser();
@@ -13,6 +21,7 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   const handleSubmit = async (action: "login" | "register") => {
     try {
@@ -42,7 +51,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            Barrister Training Platform
+            <span style={{ color: "#360089" }}>⚖</span> Advocatr
           </h1>
           <p className="mt-2 text-gray-600">
             Enhance your advocacy skills with expert guidance
@@ -84,6 +93,21 @@ export default function AuthPage() {
                 >
                   Login
                 </Button>
+                <div className="text-center">
+                  <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                    <DialogTrigger asChild>
+                      <Button variant="link" className="text-sm">
+                        Forgot Password?
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Reset Password</DialogTitle>
+                      </DialogHeader>
+                      <ResetPasswordForm onSuccess={() => setShowResetDialog(false)} />
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </TabsContent>
 
               <TabsContent value="register" className="space-y-4">
