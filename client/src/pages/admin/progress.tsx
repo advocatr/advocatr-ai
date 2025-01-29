@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +29,7 @@ interface Progress {
 
 export default function AdminProgress() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: progress, refetch } = useQuery({
     queryKey: ["/api/admin/progress"],
@@ -47,9 +48,16 @@ export default function AdminProgress() {
       if (!response.ok) throw new Error("Failed to reset progress");
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, progressId) => {
       toast({ title: "Success", description: "Progress reset successfully" });
-      refetch();
+      // Invalidate all related queries
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/progress"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/progress"] });
+      queryClient.invalidateQueries({ 
+        predicate: (query) => 
+          query.queryKey[0] === "/api/progress" || 
+          (Array.isArray(query.queryKey) && query.queryKey.includes(progressId))
+      });
     },
     onError: (error: Error) => {
       toast({
