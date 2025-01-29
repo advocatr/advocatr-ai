@@ -3,7 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import ExerciseCard from "@/components/exercise-card";
-import { LogOut, Loader2 } from "lucide-react";
+import { LogOut, Loader2, User } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface Exercise {
   id: number;
@@ -21,15 +22,16 @@ interface Progress {
 
 export default function Dashboard() {
   const { logout, user } = useUser();
+  const [, setLocation] = useLocation();
 
   const { data: exercises, isLoading: exercisesLoading } = useQuery<Exercise[]>({
     queryKey: ["/api/exercises"],
-    enabled: !!user, // Only fetch when user is logged in
+    enabled: !!user,
   });
 
   const { data: progress, isLoading: progressLoading } = useQuery<Progress[]>({
     queryKey: ["/api/progress"],
-    enabled: !!user, // Only fetch when user is logged in
+    enabled: !!user,
   });
 
   const getProgress = (exerciseId: number) => {
@@ -68,10 +70,19 @@ export default function Dashboard() {
               Track your progress through the advocacy exercises
             </p>
           </div>
-          <Button variant="outline" onClick={() => logout()}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              variant="outline"
+              onClick={() => setLocation("/profile")}
+            >
+              <User className="mr-2 h-4 w-4" />
+              Profile
+            </Button>
+            <Button variant="outline" onClick={() => logout()}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
