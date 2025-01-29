@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Key } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -11,6 +12,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
 
 interface Progress {
   id: number;
@@ -30,6 +40,8 @@ interface Progress {
 export default function AdminProgress() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const { data: progress } = useQuery({
     queryKey: ["/api/admin/progress"],
@@ -54,14 +66,14 @@ export default function AdminProgress() {
       // Invalidate all related queries
       queryClient.invalidateQueries({ queryKey: ["/api/admin/progress"] });
       queryClient.invalidateQueries({ queryKey: ["/api/exercises"] });
-      queryClient.invalidateQueries({ 
+      queryClient.invalidateQueries({
         predicate: (query) => {
           const key = query.queryKey[0];
           return (
-            key === "/api/progress" || 
+            key === "/api/progress" ||
             (typeof key === "string" && key.startsWith("/api/progress/"))
           );
-        }
+        },
       });
     },
     onError: (error: Error) => {
@@ -72,6 +84,37 @@ export default function AdminProgress() {
       });
     },
   });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async ({ userId, password }: { userId: number; password: string }) => {
+      const response = await fetch(`/api/admin/users/${userId}/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword: password }),
+      });
+      if (!response.ok) throw new Error("Failed to reset password");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Password reset successfully" });
+      setSelectedUserId(null);
+      setNewPassword("");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedUserId && newPassword) {
+      resetPasswordMutation.mutate({ userId: selectedUserId, password: newPassword });
+    }
+  };
 
   return (
     <div className="p-8">
@@ -113,14 +156,60 @@ export default function AdminProgress() {
                     {new Date(p.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => resetMutation.mutate(p.id)}
-                    >
-                      <RotateCcw className="mr-2 h-4 w-4" />
-                      Reset Progress
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => resetMutation.mutate(p.id)}
+                      >
+                        <RotateCcw className="mr-2 h-4 w-4" />
+                        Reset Progress
+                      </Button>
+                      <Dialog
+                        open={selectedUserId === p.userId}
+                        onOpenChange={(open) => {
+                          if (!open) {
+                            setSelectedUserId(null);
+                            setNewPassword("");
+                          }
+                        }}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedUserId(p.userId)}
+                          >
+                            <Key className="mr-2 h-4 w-4" />
+                            Reset Password
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Reset User Password</DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handleResetPassword} className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="new-password">New Password</Label>
+                              <Input
+                                id="new-password"
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                              />
+                            </div>
+                            <Button
+                              type="submit"
+                              className="w-full"
+                              disabled={resetPasswordMutation.isPending}
+                            >
+                              Reset Password
+                            </Button>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
