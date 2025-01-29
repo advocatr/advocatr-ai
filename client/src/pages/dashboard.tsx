@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import ExerciseCard from "@/components/exercise-card";
-import { LogOut, Loader2, User } from "lucide-react";
+import { LogOut, Loader2, User, Settings } from "lucide-react";
 import { useLocation } from "wouter";
 
 interface Exercise {
@@ -71,6 +71,15 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex gap-4">
+            {user?.isAdmin && (
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/admin/exercises")}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Admin Dashboard
+              </Button>
+            )}
             <Button
               variant="outline"
               onClick={() => setLocation("/profile")}
