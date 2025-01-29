@@ -45,11 +45,25 @@ export default function Exercise() {
   const [showProfessionalAnswer, setShowProfessionalAnswer] = useState(false);
 
   const { data: exercise } = useQuery<Exercise>({
-    queryKey: [`/api/exercises/${id}`],
+    queryKey: ["/api/exercises", id],
+    queryFn: async () => {
+      const response = await fetch(`/api/exercises/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch exercise");
+      }
+      return response.json();
+    },
   });
 
   const { data: progress, refetch: refetchProgress } = useQuery<Progress>({
-    queryKey: [`/api/progress/${id}`],
+    queryKey: ["/api/progress", id],
+    queryFn: async () => {
+      const response = await fetch(`/api/progress/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch progress");
+      }
+      return response.json();
+    },
   });
 
   const mutation = useMutation({
