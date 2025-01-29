@@ -12,12 +12,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useState } from "react";
+import { Progress } from "@/components/ui/progress";
 
 interface Exercise {
   id: number;
   title: string;
   description: string;
   demoVideoUrl: string;
+  professionalAnswerUrl: string;
 }
 
 interface Progress {
@@ -38,30 +41,51 @@ export default function Exercise() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [showProfessionalAnswer, setShowProfessionalAnswer] = useState(false);
 
   const { data: exercise } = useQuery<Exercise>({
     queryKey: [`/api/exercises/${id}`],
   });
 
-  const { data: progress } = useQuery<Progress>({
+  const { data: progress, refetch: refetchProgress } = useQuery<Progress>({
     queryKey: [`/api/progress/${id}`],
   });
 
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      // In a real app, implement video upload to a service like S3
-      const videoUrl = "https://example.com/video.mp4";
+      // Simulating upload progress
+      for (let i = 0; i <= 100; i += 10) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+        setUploadProgress(i);
+      }
+
       const response = await fetch(`/api/progress/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ videoUrl, completed: true }),
+        body: JSON.stringify({ 
+          videoUrl: URL.createObjectURL(formData.get("video") as File),
+          completed: true 
+        }),
       });
+
       if (!response.ok) throw new Error("Failed to update progress");
       return response.json();
     },
-    onSuccess: () => {
-      toast({ title: "Success", description: "Progress updated successfully" });
+    onSuccess: async () => {
+      toast({ title: "Success", description: "Video uploaded successfully" });
+      await refetchProgress();
+      setShowProfessionalAnswer(true);
+      setUploadProgress(0);
     },
+    onError: (error: Error) => {
+      toast({ 
+        title: "Error", 
+        description: error.message,
+        variant: "destructive"
+      });
+      setUploadProgress(0);
+    }
   });
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +114,7 @@ export default function Exercise() {
 
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h2 className="text-xl font-semibold mb-4">Expert Demonstration</h2>
+            <h2 className="text-xl font-semibold mb-4">Exercise Demo</h2>
             <VideoPlayer url={exercise.demoVideoUrl} />
           </div>
 
@@ -100,26 +124,48 @@ export default function Exercise() {
               <VideoPlayer url={progress.videoUrl} />
             ) : (
               <div className="bg-white p-8 rounded-lg border-2 border-dashed border-gray-300 text-center">
-                <input
-                  type="file"
-                  accept="video/*"
-                  className="hidden"
-                  id="video-upload"
-                  onChange={handleUpload}
-                />
-                <label
-                  htmlFor="video-upload"
-                  className="cursor-pointer block"
-                >
-                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-600">
-                    Click to upload your video
-                  </p>
-                </label>
+                {mutation.isPending ? (
+                  <div className="space-y-4">
+                    <Progress value={uploadProgress} className="w-full" />
+                    <p className="text-sm text-gray-600">Uploading video... {uploadProgress}%</p>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      id="video-upload"
+                      onChange={handleUpload}
+                      disabled={mutation.isPending}
+                    />
+                    <label
+                      htmlFor="video-upload"
+                      className="cursor-pointer block"
+                    >
+                      <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-2 text-sm text-gray-600">
+                        Click to upload your video
+                      </p>
+                    </label>
+                  </>
+                )}
               </div>
             )}
           </div>
         </div>
+
+        {progress?.completed && showProfessionalAnswer && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Professional Answer</h2>
+            <div className="bg-white p-6 rounded-lg border">
+              <p className="text-gray-600 mb-4">
+                Watch this professional answer to compare and learn from their approach:
+              </p>
+              <VideoPlayer url={exercise.professionalAnswerUrl} />
+            </div>
+          </div>
+        )}
 
         {progress?.completed && (
           <div className="mt-8">
