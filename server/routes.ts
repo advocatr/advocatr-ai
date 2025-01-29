@@ -2,8 +2,30 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { exercises, userProgress, feedback, users } from "@db/schema";
-import { eq, and } from "drizzle-orm";
+import { exercises, userProgress, feedback, users, passwordResetTokens } from "@db/schema";
+import { eq, and, lt } from "drizzle-orm";
+import { randomBytes } from "crypto";
+import { promisify } from "util";
+import * as crypto from 'crypto';
+
+
+const randomBytesAsync = promisify(randomBytes);
+
+async function generateResetToken(userId: number) {
+  const token = (await randomBytesAsync(32)).toString('hex');
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+
+  const [resetToken] = await db
+    .insert(passwordResetTokens)
+    .values({
+      userId,
+      token,
+      expiresAt,
+    })
+    .returning();
+
+  return resetToken;
+}
 
 function isAdmin(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
   if (!req.isAuthenticated() || !req.user.isAdmin) {
@@ -210,6 +232,104 @@ export function registerRoutes(app: Express): Server {
     }
 
     res.json(updated);
+  });
+
+  // Request password reset
+  app.post("/api/forgot-password", async (req, res) => {
+    const { email } = req.body;
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (!user) {
+      // Don't reveal if email exists
+      return res.json({ message: "If your email is registered, you will receive reset instructions." });
+    }
+
+    // Delete any existing reset tokens for this user
+    await db
+      .delete(passwordResetTokens)
+      .where(eq(passwordResetTokens.userId, user.id));
+
+    const resetToken = await generateResetToken(user.id);
+
+    // TODO: Send email with reset link
+    // For now, just return the token in the response
+    res.json({
+      message: "Password reset instructions sent",
+      token: resetToken.token // Remove this in production
+    });
+  });
+
+  // Reset password with token
+  app.post("/api/reset-password", async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    const [resetToken] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(
+        and(
+          eq(passwordResetTokens.token, token),
+          lt(passwordResetTokens.expiresAt, new Date())
+        )
+      )
+      .limit(1);
+
+    if (!resetToken) {
+      return res.status(400).send("Invalid or expired reset token");
+    }
+
+    // Hash the new password
+    const hashedPassword = await crypto.hash(newPassword);
+
+    // Update the user's password
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, resetToken.userId));
+
+    // Delete the used token
+    await db
+      .delete(passwordResetTokens)
+      .where(eq(passwordResetTokens.id, resetToken.id));
+
+    res.json({ message: "Password updated successfully" });
+  });
+
+  // Admin reset user's password
+  app.post("/api/admin/users/:id/reset-password", isAdmin, async (req, res) => {
+    const userId = parseInt(req.params.id);
+    const { newPassword } = req.body;
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Hash the new password
+    const hashedPassword = await crypto.hash(newPassword);
+
+    // Update the user's password
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, userId));
+
+    // Delete any existing reset tokens
+    await db
+      .delete(passwordResetTokens)
+      .where(eq(passwordResetTokens.userId, userId));
+
+    res.json({ message: "Password reset successfully" });
   });
 
   const httpServer = createServer(app);
