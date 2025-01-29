@@ -15,6 +15,7 @@ export const exercises = pgTable("exercises", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   demoVideoUrl: text("demo_video_url").notNull(),
+  professionalAnswerUrl: text("professional_answer_url").notNull(),
   order: integer("order").notNull(),
 });
 
