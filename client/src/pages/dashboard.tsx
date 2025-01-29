@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import ExerciseCard from "@/components/exercise-card";
-import { LogOut } from "lucide-react";
+import { LogOut, Loader2 } from "lucide-react";
 
 interface Exercise {
   id: number;
@@ -21,13 +21,15 @@ interface Progress {
 
 export default function Dashboard() {
   const { logout, user } = useUser();
-  
-  const { data: exercises } = useQuery<Exercise[]>({
+
+  const { data: exercises, isLoading: exercisesLoading } = useQuery<Exercise[]>({
     queryKey: ["/api/exercises"],
+    enabled: !!user, // Only fetch when user is logged in
   });
 
-  const { data: progress } = useQuery<Progress[]>({
+  const { data: progress, isLoading: progressLoading } = useQuery<Progress[]>({
     queryKey: ["/api/progress"],
+    enabled: !!user, // Only fetch when user is logged in
   });
 
   const getProgress = (exerciseId: number) => {
@@ -40,6 +42,19 @@ export default function Dashboard() {
     if (!previousExercise) return false;
     return getProgress(previousExercise.id)?.completed ?? false;
   };
+
+  const isLoading = exercisesLoading || progressLoading;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-gray-500" />
+          <p className="mt-2 text-gray-600">Loading exercises...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,16 +76,22 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {exercises?.map((exercise) => (
-            <ExerciseCard
-              key={exercise.id}
-              exercise={exercise}
-              progress={getProgress(exercise.id)}
-              isUnlocked={isExerciseUnlocked(exercise.order)}
-            />
-          ))}
-        </div>
+        {exercises && exercises.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {exercises.map((exercise) => (
+              <ExerciseCard
+                key={exercise.id}
+                exercise={exercise}
+                progress={getProgress(exercise.id)}
+                isUnlocked={isExerciseUnlocked(exercise.order)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-600">No exercises available</p>
+          </div>
+        )}
       </main>
     </div>
   );
