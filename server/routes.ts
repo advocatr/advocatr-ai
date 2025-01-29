@@ -2,8 +2,15 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { db } from "@db";
-import { exercises, userProgress, feedback } from "@db/schema";
+import { exercises, userProgress, feedback, users } from "@db/schema";
 import { eq, and } from "drizzle-orm";
+
+function isAdmin(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+  if (!req.isAuthenticated() || !req.user.isAdmin) {
+    return res.status(403).send("Unauthorized");
+  }
+  next();
+}
 
 export function registerRoutes(app: Express): Server {
   setupAuth(app);
@@ -146,6 +153,63 @@ export function registerRoutes(app: Express): Server {
       .returning();
 
     res.json(newFeedback);
+  });
+
+  // Admin Routes
+  app.post("/api/admin/exercises", isAdmin, async (req, res) => {
+    const { title, description, demoVideoUrl, professionalAnswerUrl, order } = req.body;
+
+    const [exercise] = await db
+      .insert(exercises)
+      .values({
+        title,
+        description,
+        demoVideoUrl,
+        professionalAnswerUrl,
+        order,
+      })
+      .returning();
+
+    res.json(exercise);
+  });
+
+  app.get("/api/admin/progress", isAdmin, async (req, res) => {
+    const progress = await db.query.userProgress.findMany({
+      with: {
+        user: {
+          columns: {
+            username: true,
+            email: true,
+          }
+        },
+        exercise: {
+          columns: {
+            title: true,
+          }
+        }
+      }
+    });
+    res.json(progress);
+  });
+
+  app.post("/api/admin/progress/:id/reset", isAdmin, async (req, res) => {
+    const progressId = parseInt(req.params.id);
+
+    const [updated] = await db
+      .update(userProgress)
+      .set({
+        completed: false,
+        videoUrl: null,
+        updatedAt: new Date()
+      })
+      .where(eq(userProgress.id, progressId))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).send("Progress record not found");
+    }
+
+    res.json(updated);
   });
 
   const httpServer = createServer(app);

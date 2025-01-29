@@ -7,8 +7,19 @@ import AuthPage from "@/pages/auth-page";
 import Dashboard from "@/pages/dashboard";
 import Exercise from "@/pages/exercise";
 import Profile from "@/pages/profile";
+import AdminExercises from "@/pages/admin/exercises";
+import AdminProgress from "@/pages/admin/progress";
+import AdminLayout from "@/components/admin-layout";
 import { useUser } from "@/hooks/use-user";
 import { Loader2 } from "lucide-react";
+
+function AdminRoute({ component: Component }: { component: React.ComponentType }) {
+  return (
+    <AdminLayout>
+      <Component />
+    </AdminLayout>
+  );
+}
 
 function Router() {
   const { user, isLoading } = useUser();
@@ -30,6 +41,12 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/exercise/:id" component={Exercise} />
       <Route path="/profile" component={Profile} />
+      <Route path="/admin/exercises">
+        {() => <AdminRoute component={AdminExercises} />}
+      </Route>
+      <Route path="/admin/progress">
+        {() => <AdminRoute component={AdminProgress} />}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
