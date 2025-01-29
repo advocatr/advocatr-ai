@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import Dashboard from "@/pages/dashboard";
 import Exercise from "@/pages/exercise";
+import Profile from "@/pages/profile";
 import { useUser } from "@/hooks/use-user";
 import { Loader2 } from "lucide-react";
 
@@ -28,6 +29,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/exercise/:id" component={Exercise} />
+      <Route path="/profile" component={Profile} />
       <Route component={NotFound} />
     </Switch>
   );
