@@ -31,7 +31,7 @@ export default function AdminProgress() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: progress, refetch } = useQuery({
+  const { data: progress } = useQuery({
     queryKey: ["/api/admin/progress"],
     queryFn: async () => {
       const response = await fetch("/api/admin/progress");
@@ -48,15 +48,20 @@ export default function AdminProgress() {
       if (!response.ok) throw new Error("Failed to reset progress");
       return response.json();
     },
-    onSuccess: (_, progressId) => {
+    onSuccess: () => {
       toast({ title: "Success", description: "Progress reset successfully" });
+
       // Invalidate all related queries
       queryClient.invalidateQueries({ queryKey: ["/api/admin/progress"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/progress"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/exercises"] });
       queryClient.invalidateQueries({ 
-        predicate: (query) => 
-          query.queryKey[0] === "/api/progress" || 
-          (Array.isArray(query.queryKey) && query.queryKey.includes(progressId))
+        predicate: (query) => {
+          const key = query.queryKey[0];
+          return (
+            key === "/api/progress" || 
+            (typeof key === "string" && key.startsWith("/api/progress/"))
+          );
+        }
       });
     },
     onError: (error: Error) => {
