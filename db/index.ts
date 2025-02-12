@@ -9,7 +9,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const db = drizzle({
-  connection: process.drizzle_knoq,
+  connection: process.dpg-cuma6t2n91rc739t9r5g-a,
   schema,
   ws: ws,
 });
