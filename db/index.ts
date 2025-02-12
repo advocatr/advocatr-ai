@@ -9,7 +9,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 export const db = drizzle({
-  connection: process.env.postgresql://drizzle_knoq_user:adEJwhHs4Qufo8JzBrQbsnTKHHUxbrCl@dpg-cuma6t2n91rc739t9r5g-a/drizzle_knoq,
+  connection: process.drizzle_knoq_user:adEJwhHs4Qufo8JzBrQbsnTKHHUxbrCl@dpg-cuma6t2n91rc739t9r5g-a/drizzle_knoq,
   schema,
   ws: ws,
 });
