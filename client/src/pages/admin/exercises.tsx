@@ -178,11 +178,19 @@ export default function AdminExercises() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Manage Exercises</h1>
-        <Dialog open={isEditing} onOpenChange={(open) => !open && setIsEditing(false)}>
+        <Dialog 
+        open={isEditing} 
+        onOpenChange={(open) => {
+          setIsEditing(open);
+          if (!open) {
+            setCurrentExercise(null);
+          }
+        }}>
           <DialogTrigger asChild>
             <Button onClick={() => {
               setIsEditing(false);
               setCurrentExercise(null);
+              // Don't call setIsEditing(false) here as DialogTrigger handles opening
             }}>
               <Plus className="mr-2 h-4 w-4" />
               Add Exercise
