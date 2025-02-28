@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,7 @@ export function Logo({ className, size = "md" }: LogoProps) {
 
   return (
     <img
-      src="/client/ssrc/components/ui/advocatr-logo-500px.png"
+      src="/advocatr-logo.png"
       alt="Advocatr Logo"
       className={cn(sizeClasses[size], className)}
     />
