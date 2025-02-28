@@ -8,12 +8,6 @@
   }
 
   body {
-
-/* Custom color for scales symbol */
-.scales-symbol {
-  color: #C3B1E1;
-}
-
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
