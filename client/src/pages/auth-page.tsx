@@ -51,7 +51,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            <span style={{ color: "#360089" }}>⚖</span> Advocatr
+            <img src="/client/src/components/ui/advocatr-logo-500px.png" alt="Advocatr" className="inline-block h-8 w-8 mr-2" /> Advocatr
           </h1>
           <p className="mt-2 text-gray-600">
             Enhance your advocacy skills with expert guidance
