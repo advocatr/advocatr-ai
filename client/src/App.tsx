@@ -12,6 +12,7 @@ import AdminProgress from "@/pages/admin/progress";
 import AdminLayout from "@/components/admin-layout";
 import { useUser } from "@/hooks/use-user";
 import { Loader2 } from "lucide-react";
+import LandingPage from "@/pages/landing-page"; // Added import for LandingPage
 
 function AdminRoute({ component: Component }: { component: React.ComponentType }) {
   return (
@@ -38,7 +39,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/" component={LandingPage} /> {/* Added route for LandingPage */}
       <Route path="/exercise/:id" component={Exercise} />
       <Route path="/profile" component={Profile} />
       <Route path="/admin/exercises">
