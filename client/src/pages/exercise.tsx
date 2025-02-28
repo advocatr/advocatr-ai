@@ -117,7 +117,7 @@ export default function Exercise() {
         <Button
           variant="outline"
           className="mb-6"
-          onClick={() => setLocation("/")}
+          onClick={() => setLocation("/dashboard")}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
