@@ -19,7 +19,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navigation = [
     {
       name: "Home",
-      href: "/admin",
+      href: "/",
       icon: Home,
     },
     {
