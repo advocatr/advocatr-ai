@@ -30,6 +30,11 @@ type ExerciseFormData = z.infer<typeof exerciseSchema>;
 export default function AdminExercises() {
   const { toast } = useToast();
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentExercise, setCurrentExercise] = useState<any>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [exerciseToDelete, setExerciseToDelete] = useState<any>(null);
+
   const { data: exercises, refetch } = useQuery({
     queryKey: ["/api/exercises"],
     queryFn: async () => {
@@ -49,6 +54,27 @@ export default function AdminExercises() {
       order: 1,
     },
   });
+
+  // Reset form when editing state changes
+  useEffect(() => {
+    if (isEditing && currentExercise) {
+      form.reset({
+        title: currentExercise.title,
+        description: currentExercise.description,
+        demoVideoUrl: currentExercise.demoVideoUrl,
+        professionalAnswerUrl: currentExercise.professionalAnswerUrl,
+        order: currentExercise.order,
+      });
+    } else if (!isEditing) {
+      form.reset({
+        title: "",
+        description: "",
+        demoVideoUrl: "",
+        professionalAnswerUrl: "",
+        order: 1,
+      });
+    }
+  }, [isEditing, currentExercise, form]);
 
   const createMutation = useMutation({
     mutationFn: async (data: ExerciseFormData) => {
@@ -74,24 +100,96 @@ export default function AdminExercises() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (data: ExerciseFormData & { id: number }) => {
+      const { id, ...exerciseData } = data;
+      const response = await fetch(`/api/admin/exercises/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(exerciseData),
+      });
+      if (!response.ok) throw new Error("Failed to update exercise");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Exercise updated successfully" });
+      refetch();
+      setIsEditing(false);
+      setCurrentExercise(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/exercises/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete exercise");
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Exercise deleted successfully" });
+      refetch();
+      setIsDeleteDialogOpen(false);
+      setExerciseToDelete(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: ExerciseFormData) => {
-    createMutation.mutate(data);
+    if (isEditing && currentExercise) {
+      updateMutation.mutate({ ...data, id: currentExercise.id });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  const handleEdit = (exercise: any) => {
+    setCurrentExercise(exercise);
+    setIsEditing(true);
+  };
+
+  const handleDelete = (exercise: any) => {
+    setExerciseToDelete(exercise);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (exerciseToDelete) {
+      deleteMutation.mutate(exerciseToDelete.id);
+    }
   };
 
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Manage Exercises</h1>
-        <Dialog>
+        <Dialog open={isEditing} onOpenChange={(open) => !open && setIsEditing(false)}>
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={() => {
+              setIsEditing(false);
+              setCurrentExercise(null);
+            }}>
               <Plus className="mr-2 h-4 w-4" />
               Add Exercise
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Exercise</DialogTitle>
+              <DialogTitle>{isEditing ? "Edit Exercise" : "Create New Exercise"}</DialogTitle>
             </DialogHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -167,7 +265,7 @@ export default function AdminExercises() {
                   )}
                 />
                 <Button type="submit" className="w-full">
-                  Create Exercise
+                  {isEditing ? "Update Exercise" : "Create Exercise"}
                 </Button>
               </form>
             </Form>
@@ -184,10 +282,18 @@ export default function AdminExercises() {
                   {exercise.order}. {exercise.title}
                 </span>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon">
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={() => handleEdit(exercise)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon">
+                  <Button 
+                    variant="outline" 
+                    size="icon"
+                    onClick={() => handleDelete(exercise)}
+                  >
                     <Trash className="h-4 w-4" />
                   </Button>
                 </div>
@@ -199,6 +305,24 @@ export default function AdminExercises() {
           </Card>
         ))}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+          </DialogHeader>
+          <p>Are you sure you want to delete "{exerciseToDelete?.title}"? This action cannot be undone.</p>
+          <div className="flex justify-end space-x-2 mt-4">
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

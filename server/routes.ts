@@ -195,6 +195,60 @@ export function registerRoutes(app: Express): Server {
     res.json(exercise);
   });
 
+  // Update an exercise
+  app.put("/api/admin/exercises/:id", isAdmin, async (req, res) => {
+    const exerciseId = parseInt(req.params.id);
+    const { title, description, demoVideoUrl, professionalAnswerUrl, order } = req.body;
+
+    const [updated] = await db
+      .update(exercises)
+      .set({
+        title,
+        description,
+        demoVideoUrl,
+        professionalAnswerUrl,
+        order,
+        updatedAt: new Date()
+      })
+      .where(eq(exercises.id, exerciseId))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).send("Exercise not found");
+    }
+
+    res.json(updated);
+  });
+
+  // Delete an exercise
+  app.delete("/api/admin/exercises/:id", isAdmin, async (req, res) => {
+    const exerciseId = parseInt(req.params.id);
+
+    // First check if there's any user progress for this exercise
+    const progressRecords = await db
+      .select()
+      .from(userProgress)
+      .where(eq(userProgress.exerciseId, exerciseId));
+
+    if (progressRecords.length > 0) {
+      // Delete all related progress records first
+      await db
+        .delete(userProgress)
+        .where(eq(userProgress.exerciseId, exerciseId));
+    }
+
+    const [deleted] = await db
+      .delete(exercises)
+      .where(eq(exercises.id, exerciseId))
+      .returning();
+
+    if (!deleted) {
+      return res.status(404).send("Exercise not found");
+    }
+
+    res.json({ message: "Exercise deleted successfully" });
+  });
+
   app.get("/api/admin/progress", isAdmin, async (req, res) => {
     const progress = await db.query.userProgress.findMany({
       with: {
