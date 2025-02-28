@@ -39,7 +39,8 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={LandingPage} /> {/* Added route for LandingPage */}
+      <Route path="/" component={LandingPage} />
+      <Route path="/dashboard" component={Dashboard} /> {/* Ensure dashboard route exists */}
       <Route path="/exercise/:id" component={Exercise} />
       <Route path="/profile" component={Profile} />
       <Route path="/admin/exercises">

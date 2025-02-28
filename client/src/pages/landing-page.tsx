@@ -21,7 +21,7 @@ export default function LandingPage() {
             <Button variant="outline" onClick={() => setLocation("/auth")}>
               Sign In
             </Button>
-            <Button onClick={() => setLocation("/dashboard")}>
+            <Button onClick={() => setLocation("/auth")}>
               Get Started
             </Button>
           </div>
@@ -38,7 +38,7 @@ export default function LandingPage() {
             </p>
             <Button 
               size="lg" 
-              onClick={() => setLocation("/dashboard")} 
+              onClick={() => setLocation("/auth")} 
               className="px-8 py-6 text-lg"
             >
               Start Your Journey <ArrowRight className="ml-2" />
@@ -81,7 +81,7 @@ export default function LandingPage() {
             <h2 className="text-3xl font-bold mb-6">Ready to Improve Your Advocacy Skills?</h2>
             <Button 
               size="lg" 
-              onClick={() => setLocation("/dashboard")} 
+              onClick={() => setLocation("/auth")} 
               className="px-8 py-6 text-lg"
             >
               Begin Now <ArrowRight className="ml-2" />
