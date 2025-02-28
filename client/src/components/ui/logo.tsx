@@ -15,7 +15,7 @@ export function Logo({ className, size = "md" }: LogoProps) {
 
   return (
     <img
-      src="client/src/components/ui/advocatr-logo 500px.png"
+      src="/client/ssrc/components/ui/advocatr-logo-500px.png"
       alt="Advocatr Logo"
       className={cn(sizeClasses[size], className)}
     />
