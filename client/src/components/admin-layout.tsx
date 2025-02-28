@@ -1,7 +1,7 @@
 import { useUser } from "@/hooks/use-user";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Users, LogOut } from "lucide-react";
+import { Home, LayoutGrid, LogOut, Users } from "lucide-react";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -17,6 +17,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const navigation = [
+    {
+      name: "Home",
+      href: "/admin",
+      icon: Home,
+    },
     {
       name: "Exercises",
       href: "/admin/exercises",
