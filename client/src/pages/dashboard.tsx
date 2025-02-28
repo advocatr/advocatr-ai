@@ -14,6 +14,8 @@ interface Exercise {
   order: number;
 }
 
+import { useEffect } from "react";
+
 interface Progress {
   exerciseId: number;
   completed: boolean;
@@ -23,6 +25,13 @@ interface Progress {
 export default function Dashboard() {
   const { logout, user } = useUser();
   const [, setLocation] = useLocation();
+  
+  // Redirect unauthenticated users to auth page
+  useEffect(() => {
+    if (!user) {
+      setLocation("/auth");
+    }
+  }, [user, setLocation]);
 
   const { data: exercises, isLoading: exercisesLoading } = useQuery<Exercise[]>({
     queryKey: ["/api/exercises"],

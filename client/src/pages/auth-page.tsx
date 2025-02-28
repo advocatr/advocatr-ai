@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/hooks/use-user";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import ResetPasswordForm from "@/components/reset-password-form";
 import {
   Dialog,
@@ -16,12 +17,20 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AuthPage() {
-  const { login, register } = useUser();
+  const { login, register, user } = useUser();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showResetDialog, setShowResetDialog] = useState(false);
+  
+  // Redirect authenticated users to the dashboard
+  useEffect(() => {
+    if (user) {
+      setLocation("/dashboard");
+    }
+  }, [user, setLocation]);
 
   const handleSubmit = async (action: "login" | "register") => {
     try {
