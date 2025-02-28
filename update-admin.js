@@ -1,12 +1,18 @@
 
 import { drizzle } from "drizzle-orm/neon-serverless";
 import dotenv from "dotenv";
-import { users } from "./db/schema.js";
 import { eq } from "drizzle-orm";
 import ws from "ws";
 
 // Load environment variables
 dotenv.config();
+
+// Import the schema directly to avoid ES module issues
+const usersSchema = {
+  id: { name: "id" },
+  username: { name: "username" },
+  isAdmin: { name: "is_admin" }
+};
 
 async function updateUser() {
   try {
@@ -16,18 +22,18 @@ async function updateUser() {
       process.exit(1);
     }
 
-    // Import db modules
+    // Create db connection
     const db = drizzle({
       connection: process.env.DATABASE_URL,
-      schema: { users },
+      schema: { users: usersSchema },
       ws
     });
 
     // Find Jack Booth's user record
     const [jackBoothUser] = await db
       .select()
-      .from(users)
-      .where(eq(users.username, "Jack Booth"))
+      .from({ users: "users" })
+      .where(eq(usersSchema.username, "Jack Booth"))
       .limit(1);
 
     if (!jackBoothUser) {
@@ -36,13 +42,12 @@ async function updateUser() {
     }
 
     // Update the user to be an admin
-    const [updatedUser] = await db
-      .update(users)
-      .set({ isAdmin: true })
-      .where(eq(users.id, jackBoothUser.id))
-      .returning();
+    await db
+      .update({ users: "users" })
+      .set({ is_admin: true })
+      .where(eq(usersSchema.id, jackBoothUser.id));
 
-    console.log(`User '${updatedUser.username}' (ID: ${updatedUser.id}) has been granted admin privileges.`);
+    console.log(`User '${jackBoothUser.username}' (ID: ${jackBoothUser.id}) has been granted admin privileges.`);
     console.log("They can now access the admin pages at /admin/exercises and /admin/progress");
   } catch (error) {
     console.error('Error updating user:', error);
