@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Logo } from "@/components/ui/logo"; // Added import
 
 export default function AuthPage() {
   const { login, register } = useUser();
@@ -50,9 +51,7 @@ export default function AuthPage() {
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            <img src="/advocatr-logo-500px.png" alt="Advocatr" className="inline-block h-8 w-8 mr-2" /> Advocatr
-          </h1>
+          <Logo /> {/*Replaced image with Logo component*/}
           <p className="mt-2 text-gray-600">
             Enhance your advocacy skills with expert guidance
           </p>

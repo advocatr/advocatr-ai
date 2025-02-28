@@ -5,6 +5,7 @@ import { useUser } from "@/hooks/use-user";
 import ExerciseCard from "@/components/exercise-card";
 import { LogOut, Loader2, User, Settings } from "lucide-react";
 import { useLocation } from "wouter";
+import { Logo } from "@/components/ui/logo";
 
 interface Exercise {
   id: number;
@@ -65,7 +66,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                <img src="/advocatr-logo-500px.png" alt="Advocatr" className="inline-block h-8 w-8 mr-2" /> Advocatr
+                <Logo className="inline-block h-8 w-8 mr-2" /> Advocatr
               </h1>
               <p className="mt-1 text-sm text-gray-600">
                 Track your progress through the advocacy exercises
