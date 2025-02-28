@@ -23,7 +23,7 @@ function AdminRoute({ component: Component }: { component: React.ComponentType }
 }
 
 function Router() {
-  const { user, isLoading } = useUser();
+  const { isLoading } = useUser();
 
   if (isLoading) {
     return (
@@ -31,10 +31,6 @@ function Router() {
         <Loader2 className="h-8 w-8 animate-spin text-border" />
       </div>
     );
-  }
-
-  if (!user) {
-    return <AuthPage />;
   }
 
   return (
