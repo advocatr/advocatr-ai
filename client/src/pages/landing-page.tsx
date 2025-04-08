@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -21,9 +20,7 @@ export default function LandingPage() {
             <Button variant="outline" onClick={() => setLocation("/auth")}>
               Sign In
             </Button>
-            <Button onClick={() => setLocation("/auth")}>
-              Get Started
-            </Button>
+            <Button onClick={() => setLocation("/auth")}>Get Started</Button>
           </div>
         </header>
 
@@ -33,12 +30,13 @@ export default function LandingPage() {
               Master Advocacy Skills with Expert Guidance
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Advocatr provides structured exercises and feedback to help you develop
-              essential advocacy skills for legal practice and beyond.
+              Advocatr provides structured exercises and feedback to help you
+              develop essential advocacy skills for pupillage interview practice
+              and beyond.
             </p>
-            <Button 
-              size="lg" 
-              onClick={() => setLocation("/auth")} 
+            <Button
+              size="lg"
+              onClick={() => setLocation("/auth")}
               className="px-8 py-6 text-lg"
             >
               Start Your Journey <ArrowRight className="ml-2" />
@@ -51,37 +49,44 @@ export default function LandingPage() {
                 <BookOpen className="h-10 w-10 mb-4 text-primary" />
                 <h2 className="text-xl font-bold mb-2">Practical Exercises</h2>
                 <p className="text-gray-600">
-                  Learn through a series of progressive exercises designed by legal professionals.
+                  Learn through a series of progressive exercises designed by
+                  legal professionals.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <Users className="h-10 w-10 mb-4 text-primary" />
                 <h2 className="text-xl font-bold mb-2">Expert Demos</h2>
                 <p className="text-gray-600">
-                  Watch demonstrations from experienced advocates to understand best practices.
+                  Watch demonstrations from experienced advocates to understand
+                  best practices.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <Award className="h-10 w-10 mb-4 text-primary" />
-                <h2 className="text-xl font-bold mb-2">Personalized Feedback</h2>
+                <h2 className="text-xl font-bold mb-2">
+                  Professional Feedback
+                </h2>
                 <p className="text-gray-600">
-                  Receive detailed feedback on your submissions to improve your skills.
+                  Receive detailed feedback on your submissions to improve your
+                  skills.
                 </p>
               </CardContent>
             </Card>
           </section>
 
           <section className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-6">Ready to Improve Your Advocacy Skills?</h2>
-            <Button 
-              size="lg" 
-              onClick={() => setLocation("/auth")} 
+            <h2 className="text-3xl font-bold mb-6">
+              Ready to Improve Your Advocacy Skills?
+            </h2>
+            <Button
+              size="lg"
+              onClick={() => setLocation("/auth")}
               className="px-8 py-6 text-lg"
             >
               Begin Now <ArrowRight className="ml-2" />
