@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/ui/logo";
+import { SiteNavigation } from "@/components/ui/site-navigation";
 import { ArrowRight, BookOpen, Users, Award, User, LogOut } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 
