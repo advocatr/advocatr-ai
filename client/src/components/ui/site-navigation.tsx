@@ -29,7 +29,6 @@ export function SiteNavigation() {
     { label: "How to Use", path: "/how-to-use" },
     { label: "Resources", path: "/resources" },
     { label: "Contact", path: "/contact" },
-    { label: "Terms & Privacy", path: "/terms" },
     { label: "Sign In", path: "/auth", variant: "ghost" as const },
     { label: "Get Started", path: "/auth" }
   ];
