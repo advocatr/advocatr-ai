@@ -122,15 +122,6 @@ export default function Exercise() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
           </Button>
-          {exercise.pdfUrl && (
-            <Button
-              variant="outline"
-              onClick={() => window.open(exercise.pdfUrl, '_blank')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              View Materials
-            </Button>
-          )}
         </div>
 
         <h1 className="text-3xl font-bold mb-6">{exercise.title}</h1>
@@ -140,6 +131,15 @@ export default function Exercise() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Exercise Demo</h2>
             <VideoPlayer url={exercise.demoVideoUrl} />
+            {exercise.pdfUrl && (
+              <Button
+                className="mt-4"
+                onClick={() => window.open(exercise.pdfUrl, '_blank')}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                View Materials
+              </Button>
+            )}
           </div>
 
           <div>
