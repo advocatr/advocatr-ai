@@ -4,7 +4,7 @@ import VideoPlayer from "@/components/video-player";
 import FeedbackForm from "@/components/feedback-form";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Upload, Check, MessageCircle } from "lucide-react";
+import { ArrowLeft, Upload, Check, MessageCircle, FileText } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -114,14 +114,24 @@ export default function Exercise() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <Button
-          variant="outline"
-          className="mb-6"
-          onClick={() => setLocation("/dashboard")}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="outline"
+            onClick={() => setLocation("/dashboard")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Button>
+          {exercise.pdfUrl && (
+            <Button
+              variant="outline"
+              onClick={() => window.open(exercise.pdfUrl, '_blank')}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              View Materials
+            </Button>
+          )}
+        </div>
 
         <h1 className="text-3xl font-bold mb-6">{exercise.title}</h1>
         <p className="text-gray-600 mb-8">{exercise.description}</p>

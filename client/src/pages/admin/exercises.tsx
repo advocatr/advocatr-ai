@@ -273,6 +273,19 @@ export default function AdminExercises() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="pdfUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PDF Materials URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="url" placeholder="https://example.com/materials.pdf" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button type="submit" className="w-full">
                   {isEditing ? "Update Exercise" : "Create Exercise"}
                 </Button>
