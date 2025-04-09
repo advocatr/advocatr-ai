@@ -26,6 +26,7 @@ export default function LandingPage() {
                   My Profile
                 </Button>
                 <Button onClick={() => setLocation("/dashboard")}>
+                  <BookOpen className="mr-2 h-4 w-4" />
                   Exercises
                 </Button>
                 <Button variant="outline" onClick={() => logout()}>
