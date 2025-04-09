@@ -3,10 +3,12 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/ui/logo";
-import { ArrowRight, BookOpen, Users, Award } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Award, User } from "lucide-react";
+import { useUser } from "@/hooks/use-user";
 
 export default function LandingPage() {
   const [, setLocation] = useLocation();
+  const { user } = useUser();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
@@ -17,10 +19,19 @@ export default function LandingPage() {
             <h1 className="text-2xl font-bold">Advocatr</h1>
           </div>
           <div className="flex gap-4">
-            <Button variant="outline" onClick={() => setLocation("/auth")}>
-              Sign In
-            </Button>
-            <Button onClick={() => setLocation("/auth")}>Get Started</Button>
+            {user ? (
+              <Button variant="outline" onClick={() => setLocation("/profile")}>
+                <User className="mr-2 h-4 w-4" />
+                My Profile
+              </Button>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => setLocation("/auth")}>
+                  Sign In
+                </Button>
+                <Button onClick={() => setLocation("/auth")}>Get Started</Button>
+              </>
+            )}
           </div>
         </header>
 
