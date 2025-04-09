@@ -143,11 +143,13 @@ export default function Exercise() {
                 </Button>
                 {showPdf && (
                   <div className="w-full h-[500px] border rounded-lg overflow-hidden">
-                    <iframe 
-                      src={`${exercise.pdfUrl}#toolbar=0`}
+                    <object
+                      data={exercise.pdfUrl}
+                      type="application/pdf"
                       className="w-full h-full"
-                      title="Exercise Materials"
-                    />
+                    >
+                      <p>Unable to display PDF. <a href={exercise.pdfUrl} target="_blank" rel="noopener noreferrer">Download PDF</a></p>
+                    </object>
                   </div>
                 )}
               </div>
