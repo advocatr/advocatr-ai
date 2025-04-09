@@ -15,14 +15,22 @@ export function SiteNavigation() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const menuItems = [
+  const { user, logout } = useUser();
+  
+  const menuItems = user ? [
+    { label: "Exercises", path: "/dashboard" },
+    { label: "Resources", path: "/resources" },
+    { label: "Profile", path: "/profile" },
+    ...(user.isAdmin ? [{ label: "Admin", path: "/admin/exercises" }] : []),
+    { label: "Logout", onClick: () => logout(), variant: "ghost" as const }
+  ] : [
     { label: "About Advocatr", path: "/about" },
     { label: "How to Use", path: "/how-to-use" },
     { label: "Resources", path: "/resources" },
     { label: "Contact", path: "/contact" },
     { label: "Terms & Privacy", path: "/terms" },
     { label: "Sign In", path: "/auth", variant: "ghost" as const },
-    { label: "Get Started", path: "/auth" },
+    { label: "Get Started", path: "/auth" }
   ];
 
   if (isMobile) {
@@ -55,10 +63,10 @@ export function SiteNavigation() {
     <nav className="hidden md:flex items-center gap-1">
       {menuItems.map((item) => (
         <Button
-          key={item.path}
-          variant="ghost"
+          key={item.path || item.label}
+          variant={item.variant || "ghost"}
           size="sm"
-          onClick={() => setLocation(item.path)}
+          onClick={item.onClick || (() => setLocation(item.path))}
         >
           {item.label}
         </Button>
