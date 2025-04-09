@@ -73,9 +73,11 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                <img src="/advocatr-logo.png" alt="Advocatr" className="inline-block h-8 w-8 mr-2" /> Advocatr
-              </h1>
+              <a href="/" className="inline-block hover:opacity-90 transition-opacity">
+                <h1 className="text-3xl font-bold text-gray-900">
+                  <img src="/advocatr-logo.png" alt="Advocatr" className="inline-block h-8 w-8 mr-2" /> Advocatr
+                </h1>
+              </a>
               <p className="mt-1 text-sm text-gray-600">
                 Track your progress through the advocacy exercises
               </p>
