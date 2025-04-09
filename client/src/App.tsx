@@ -12,7 +12,15 @@ import AdminProgress from "@/pages/admin/progress";
 import AdminLayout from "@/components/admin-layout";
 import { useUser } from "@/hooks/use-user";
 import { Loader2 } from "lucide-react";
-import LandingPage from "@/pages/landing-page"; // Added import for LandingPage
+import LandingPage from "@/pages/landing-page";
+import AboutPage from "@/pages/about"; // Added
+import HowToUsePage from "@/pages/how-to-use"; // Added
+import ExercisesPage from "@/pages/exercises"; // Added
+import AdvocacyResourcesPage from "@/pages/advocacy-resources"; // Added
+import FeedbackPage from "@/pages/feedback"; // Added
+import ContactUsPage from "@/pages/contact-us"; // Added
+import TermsAndConditionsPage from "@/pages/terms-and-conditions"; // Added
+
 
 function AdminRoute({ component: Component }: { component: React.ComponentType }) {
   return (
@@ -40,6 +48,13 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/exercise/:id" component={Exercise} />
       <Route path="/profile" component={Profile} />
+      <Route path="/about" component={AboutPage} />
+      <Route path="/how-to-use" component={HowToUsePage} />
+      <Route path="/exercises" component={ExercisesPage} />
+      <Route path="/advocacy-resources" component={AdvocacyResourcesPage} />
+      <Route path="/feedback" component={FeedbackPage} />
+      <Route path="/contact-us" component={ContactUsPage} />
+      <Route path="/terms-and-conditions" component={TermsAndConditionsPage} />
       <Route path="/admin/exercises">
         {() => <AdminRoute component={AdminExercises} />}
       </Route>
