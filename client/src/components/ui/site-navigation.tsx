@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useUser } from "@/hooks/use-user";
 
 export function SiteNavigation() {
   const [, setLocation] = useLocation();
