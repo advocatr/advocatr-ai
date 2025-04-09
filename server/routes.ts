@@ -179,7 +179,7 @@ export function registerRoutes(app: Express): Server {
 
   // Admin Routes
   app.post("/api/admin/exercises", isAdmin, async (req, res) => {
-    const { title, description, demoVideoUrl, professionalAnswerUrl, order } = req.body;
+    const { title, description, demoVideoUrl, professionalAnswerUrl, order, pdfUrl } = req.body;
 
     const [exercise] = await db
       .insert(exercises)
@@ -188,6 +188,7 @@ export function registerRoutes(app: Express): Server {
         description,
         demoVideoUrl,
         professionalAnswerUrl,
+        pdfUrl,
         order,
       })
       .returning();
@@ -198,7 +199,7 @@ export function registerRoutes(app: Express): Server {
   // Update an exercise
   app.put("/api/admin/exercises/:id", isAdmin, async (req, res) => {
     const exerciseId = parseInt(req.params.id);
-    const { title, description, demoVideoUrl, professionalAnswerUrl, order } = req.body;
+    const { title, description, demoVideoUrl, professionalAnswerUrl, order, pdfUrl } = req.body;
 
     const [updated] = await db
       .update(exercises)
@@ -207,6 +208,7 @@ export function registerRoutes(app: Express): Server {
         description,
         demoVideoUrl,
         professionalAnswerUrl,
+        pdfUrl,
         order,
         updatedAt: new Date()
       })
