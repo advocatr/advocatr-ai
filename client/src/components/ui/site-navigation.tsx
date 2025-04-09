@@ -1,13 +1,19 @@
+
 import * as React from "react";
 import { useLocation } from "wouter";
 import { Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function SiteNavigation() {
   const [, setLocation] = useLocation();
-  const isMobile = useIsMobile();
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const menuItems = [
     { label: "About Advocatr", path: "/about" },
@@ -19,31 +25,16 @@ export function SiteNavigation() {
     { label: "Terms & Privacy", path: "/terms" },
   ];
 
-  const NavigationItems = () => (
-    <nav className="hidden md:flex gap-1">
-      {menuItems.map((item) => (
-        <Button
-          key={item.path}
-          variant="ghost"
-          className="text-sm font-medium transition-colors hover:text-primary"
-          onClick={() => setLocation(item.path)}
-        >
-          {item.label}
-        </Button>
-      ))}
-    </nav>
-  );
-
   if (isMobile) {
     return (
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Menu className="h-5 w-5" />
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="right" className="w-64">
-          <div className="flex flex-col gap-2 pt-6">
+        <SheetContent className="w-[200px] sm:w-[240px]">
+          <nav className="flex flex-col gap-2 pt-4">
             {menuItems.map((item) => (
               <Button
                 key={item.path}
@@ -54,15 +45,24 @@ export function SiteNavigation() {
                 {item.label}
               </Button>
             ))}
-          </div>
+          </nav>
         </SheetContent>
       </Sheet>
     );
   }
 
   return (
-    <div className="hidden md:block">
-      <NavigationItems />
-    </div>
+    <nav className="hidden md:flex items-center gap-1">
+      {menuItems.map((item) => (
+        <Button
+          key={item.path}
+          variant="ghost"
+          size="sm"
+          onClick={() => setLocation(item.path)}
+        >
+          {item.label}
+        </Button>
+      ))}
+    </nav>
   );
 }
