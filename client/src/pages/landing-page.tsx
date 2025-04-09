@@ -18,7 +18,7 @@ export default function LandingPage() {
             <Logo size="lg" />
             <h1 className="text-2xl font-bold">Advocatr</h1>
           </div>
-          <div className="flex gap-4">
+          <div className="flex items-center">
             {user ? (
               <>
                 <Button variant="outline" onClick={() => setLocation("/profile")}>
@@ -35,12 +35,7 @@ export default function LandingPage() {
                 </Button>
               </>
             ) : (
-              <>
-                <Button variant="outline" onClick={() => setLocation("/auth")}>
-                  Sign In
-                </Button>
-                <Button onClick={() => setLocation("/auth")}>Get Started</Button>
-              </>
+              <SiteNavigation />
             )}
           </div>
         </header>

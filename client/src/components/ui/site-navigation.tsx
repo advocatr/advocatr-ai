@@ -18,11 +18,11 @@ export function SiteNavigation() {
   const menuItems = [
     { label: "About Advocatr", path: "/about" },
     { label: "How to Use", path: "/how-to-use" },
-    { label: "Exercises", path: "/dashboard" },
     { label: "Resources", path: "/resources" },
-    { label: "Feedback", path: "/feedback" },
     { label: "Contact", path: "/contact" },
     { label: "Terms & Privacy", path: "/terms" },
+    { label: "Sign In", path: "/auth", variant: "ghost" as const },
+    { label: "Get Started", path: "/auth" },
   ];
 
   if (isMobile) {
