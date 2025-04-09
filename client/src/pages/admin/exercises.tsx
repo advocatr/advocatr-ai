@@ -66,6 +66,7 @@ export default function AdminExercises() {
         description: currentExercise.description,
         demoVideoUrl: currentExercise.demoVideoUrl,
         professionalAnswerUrl: currentExercise.professionalAnswerUrl,
+        pdfUrl: currentExercise.pdfUrl || "",
         order: currentExercise.order,
       });
     } else if (!isEditing) {
