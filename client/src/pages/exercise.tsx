@@ -43,6 +43,7 @@ export default function Exercise() {
   const { toast } = useToast();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showProfessionalAnswer, setShowProfessionalAnswer] = useState(false);
+  const [showPdf, setShowPdf] = useState(false);
 
   const { data: exercise } = useQuery<Exercise>({
     queryKey: ["/api/exercises", id],
@@ -132,13 +133,24 @@ export default function Exercise() {
             <h2 className="text-xl font-semibold mb-4">Exercise Demo</h2>
             <VideoPlayer url={exercise.demoVideoUrl} />
             {exercise.pdfUrl && (
-              <Button
-                className="mt-4"
-                onClick={() => window.open(exercise.pdfUrl, '_blank')}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                View Materials
-              </Button>
+              <div className="mt-4">
+                <Button
+                  onClick={() => setShowPdf(!showPdf)}
+                  className="mb-4"
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  {showPdf ? 'Hide Materials' : 'View Materials'}
+                </Button>
+                {showPdf && (
+                  <div className="w-full h-[500px] border rounded-lg overflow-hidden">
+                    <iframe 
+                      src={`${exercise.pdfUrl}#toolbar=0`}
+                      className="w-full h-full"
+                      title="Exercise Materials"
+                    />
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
