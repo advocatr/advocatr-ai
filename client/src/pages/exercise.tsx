@@ -147,6 +147,8 @@ export default function Exercise() {
                       src={`/pdfs/${exercise.pdfUrl.split('/').pop()}`}
                       className="w-full h-full"
                       title="Exercise Materials"
+                      sandbox="allow-same-origin allow-scripts allow-forms"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                 )}
