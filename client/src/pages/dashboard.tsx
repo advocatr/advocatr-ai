@@ -5,6 +5,7 @@ import { useUser } from "@/hooks/use-user";
 import ExerciseCard from "@/components/exercise-card";
 import { LogOut, Loader2, User, Settings } from "lucide-react";
 import { useLocation } from "wouter";
+import { SiteNavigation } from "@/components/ui/site-navigation";
 
 interface Exercise {
   id: number;
