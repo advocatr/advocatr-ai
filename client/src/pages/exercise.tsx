@@ -144,9 +144,13 @@ export default function Exercise() {
                 {showPdf && (
                   <div className="w-full h-[500px] border rounded-lg overflow-hidden">
                     <iframe
-                      src={`/pdfs/${exercise.pdfUrl.split('/').pop()}`}
+                      src={URL.createObjectURL(new Blob(
+                        [`<iframe src="/pdfs/${exercise.pdfUrl.split('/').pop()}" width="100%" height="100%" frameborder="0"></iframe>`],
+                        { type: 'text/html' }
+                      ))}
                       className="w-full h-full"
                       title="Exercise Materials"
+                      sandbox="allow-same-origin allow-scripts"
                     />
                   </div>
                 )}
