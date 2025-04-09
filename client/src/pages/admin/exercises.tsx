@@ -23,6 +23,7 @@ const exerciseSchema = z.object({
   description: z.string().min(1, "Description is required"),
   demoVideoUrl: z.string().url("Must be a valid URL"),
   professionalAnswerUrl: z.string().url("Must be a valid URL"),
+  pdfUrl: z.string().url("Must be a valid URL").optional(),
   order: z.number().min(1, "Order must be at least 1"),
 });
 
@@ -52,6 +53,7 @@ export default function AdminExercises() {
       description: "",
       demoVideoUrl: "",
       professionalAnswerUrl: "",
+      pdfUrl: "",
       order: 1,
     },
   });
