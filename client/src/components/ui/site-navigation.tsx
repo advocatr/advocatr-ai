@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useLocation } from "wouter";
 import { Menu } from "lucide-react";
@@ -21,7 +20,7 @@ export function SiteNavigation() {
   ];
 
   const NavigationItems = () => (
-    <nav className="flex gap-1">
+    <nav className="hidden md:flex gap-1">
       {menuItems.map((item) => (
         <Button
           key={item.path}
