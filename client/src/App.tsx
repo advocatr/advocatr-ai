@@ -21,8 +21,11 @@ import FeedbackPage from "@/pages/feedback"; // Added
 import ContactUsPage from "@/pages/contact-us"; // Added
 import TermsAndConditionsPage from "@/pages/terms-and-conditions"; // Added
 
-
-function AdminRoute({ component: Component }: { component: React.ComponentType }) {
+function AdminRoute({
+  component: Component,
+}: {
+  component: React.ComponentType;
+}) {
   return (
     <AdminLayout>
       <Component />
@@ -51,9 +54,9 @@ function Router() {
       <Route path="/about" component={AboutPage} />
       <Route path="/how-to-use" component={HowToUsePage} />
       <Route path="/exercises" component={ExercisesPage} />
-      <Route path="/resources" component={ResourcesPage} 
+      <Route path="/resources" component={ResourcesPage} />
       <Route path="/feedback" component={FeedbackPage} />
-      <Route path="/contact-us" component={ContactUsPage} />
+      <Route path="/contact" component={ContactUsPage} />
       <Route path="/terms-and-conditions" component={TermsAndConditionsPage} />
       <Route path="/admin/exercises">
         {() => <AdminRoute component={AdminExercises} />}
