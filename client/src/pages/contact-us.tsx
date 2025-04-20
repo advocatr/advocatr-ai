@@ -18,9 +18,17 @@ export default function ContactUsPage() {
     setIsSubmitting(true);
 
     try {
-      // In a real application, you would send this to your backend
-      // For now, we'll simulate the email being sent
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, content }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
       
       // Reset form
       setName("");

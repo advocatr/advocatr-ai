@@ -388,6 +388,23 @@ export function registerRoutes(app: Express): Server {
     res.json({ message: "Password reset successfully" });
   });
 
+  // Contact form endpoint
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { name, email, content } = req.body;
+      
+      if (!name || !email || !content) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+
+      await sendContactEmail(name, email, content);
+      res.json({ message: "Message sent successfully" });
+    } catch (error) {
+      console.error("Error sending contact email:", error);
+      res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
