@@ -7,6 +7,7 @@ import { eq, and, lt } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { promisify } from "util";
 import * as crypto from 'crypto';
+import { sendContactEmail } from "./email"; // Added import
 
 
 const randomBytesAsync = promisify(randomBytes);
@@ -392,7 +393,7 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/contact", async (req, res) => {
     try {
       const { name, email, content } = req.body;
-      
+
       if (!name || !email || !content) {
         return res.status(400).json({ message: "All fields are required" });
       }
