@@ -2,6 +2,12 @@
 import nodemailer from 'nodemailer';
 
 // Configure email transporter
+console.log('Email Config:', {
+  user: process.env.EMAIL_USER,
+  // Mask password for security
+  hasPassword: !!process.env.EMAIL_PASSWORD
+});
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
